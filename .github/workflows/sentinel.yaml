@@ -6,6 +6,7 @@ on:
       - '.gitignore'
       - 'README.md'
       - 'LICENSE'
+      - '.github/workflows/sentinel.yaml'
 
 jobs:
   reject-trespasser:
