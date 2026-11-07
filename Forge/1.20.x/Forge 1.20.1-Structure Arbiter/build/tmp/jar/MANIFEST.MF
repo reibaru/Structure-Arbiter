@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Specification-Title: arbiter
+Specification-Vendor: reibaru
+Specification-Version: 1
+Implementation-Title: Forge 1.20.1-Structure Arbiter
+Implementation-Version: 1.0.0
+Implementation-Vendor: reibaru
+Implementation-Timestamp: 2026-11-07T21:03:56+0900
+MixinConfigs: arbiter.mixins.json
+
