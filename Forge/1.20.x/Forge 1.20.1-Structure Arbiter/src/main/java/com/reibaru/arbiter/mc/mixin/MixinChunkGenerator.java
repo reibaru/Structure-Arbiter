@@ -52,7 +52,6 @@ import java.util.function.Predicate;
  * ArbiterAccess を実装するので、コマンド側が (ChunkGenerator instanceof ArbiterAccess) で
  * ディメンションごとのソルバを取り出せる。
  *
- * 未検証: Official(Mojang)マッピング 1.20.1 の記憶に基づく記述子。ビルド/起動で
  * 「target not found」が出たら、署名をIDEの逆コンパイルで確認して直す。injectors.defaultRequire=1
  * にしてあるので、合わなければ起動時に必ず落ちる（黙って効かない状態にはならない）。
  */
