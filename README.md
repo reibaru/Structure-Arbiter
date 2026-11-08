@@ -1,3 +1,5 @@
+I developed it in collaboration with AI.
+
 # Structure-Arbiter
 **Stop structure mods from overlapping each other.**
 
