@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.reibaru.arbiter.mc.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MixinChunkGenerator"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
