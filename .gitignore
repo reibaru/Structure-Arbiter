@@ -17,6 +17,9 @@ out
 build
 .gradle
 
+# Minecraft
+run/
+
 # other
 eclipse
 run
