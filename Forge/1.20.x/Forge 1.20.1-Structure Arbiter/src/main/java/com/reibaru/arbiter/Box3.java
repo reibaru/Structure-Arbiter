@@ -1,9 +1,5 @@
 package com.reibaru.arbiter;
 
-/**
- * ブロック座標の閉区間AABB [min, max]（MinecraftのBoundingBoxと同じ流儀）。
- * MC非依存なので単体テストできる。
- */
 public record Box3(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 
     public Box3 {
@@ -29,7 +25,6 @@ public record Box3(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         return new Box3(minX + dx, minY + dy, minZ + dz, maxX + dx, maxY + dy, maxZ + dz);
     }
 
-    /** 水平方向にn ブロック広げる（構造物同士の最小間隔の表現に使う）。 */
     public Box3 inflateXZ(int n) {
         return n == 0 ? this : new Box3(minX - n, minY, minZ - n, maxX + n, maxY, maxZ + n);
     }
