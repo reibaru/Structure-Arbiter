@@ -50,7 +50,6 @@ public final class RegionSolver {
         this.source = source;
     }
 
-    /** intent の確定配置。empty なら棄却。 */
     public Optional<Placement> decide(StructureIntent intent) {
         Optional<Placement> cached = cache.get(intent);
         if (cached != null) return cached;
@@ -82,8 +81,6 @@ public final class RegionSolver {
     public static boolean conflicts(Box3 a, int marginA, Box3 b, int marginB) {
         return a.inflateXZ(Math.max(marginA, marginB)).intersects(b);
     }
-
-    // ---------------------------------------------------------------- internal
 
     private Optional<Placement> decide(StructureIntent intent, Map<StructureIntent, Optional<Placement>> memo) {
         Optional<Placement> m = memo.get(intent);
