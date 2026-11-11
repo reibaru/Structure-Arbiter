@@ -9,34 +9,12 @@ import java.util.SplittableRandom;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiPredicate;
 
-/**
- * 決定的な調停ソルバ。
- *
- * 核になる性質:
- *   decide(intent) は「intent本体＋シード＋IntentSource」だけで決まる純粋関数。
- *   誰が・どの順で・どのリージョンから問い合わせても同じ答えを返す。
- *
- * 規則（priority降順→id順の順位を入れた貪欲法）:
- *   0. 同じ構造物（同じid）同士は調停しない。その配置規則（spacing/separation）はMOD側に任せる。
- *      密集して小さい構造物（モンスタールーム系など）が自己衝突で大量に棄却されるのを防ぐ
- *   1. intent X に対し、X と衝突しうる「より高順位」のintent Hを近傍から集める
- *   2. 各Hの確定配置を再帰的に decide(H) で求める（順位は単調に下がるので必ず停止する）
- *   3. X は 希望位置 → シード由来の決定的な移動候補列 の順に試し、
- *      確定済みHの配置と衝突しない最初の候補を採用。全滅なら棄却
- *
- * 既知の限界: 再帰は衝突グラフを順位の高い方向にたどる。構造物が疎なら連鎖は数個で終わるが、
- * 高密度だと深くなる。その場合はMOD側のspacing設定かregion/margin設計で密度を下げること。
- */
+
 public final class RegionSolver {
 
     private static final int CANDIDATES = 8;
     private static final int CACHE_LIMIT = 200_000;
 
-    /**
-     * 順位: priority が大きい方が上、同じなら id の辞書順が小さい方が上。
-     * id と priority だけで決まる（生成前に判定できる）のが肝。
-     * 同じ id 同士は比較しない（下の higherRankedPlacements で除外する）ので、全順序として十分。
-     */
     static boolean isHigher(int priorityA, String idA, int priorityB, String idB) {
         return priorityA != priorityB ? priorityA > priorityB : idA.compareTo(idB) < 0;
     }
@@ -82,8 +60,6 @@ public final class RegionSolver {
     public static boolean conflicts(Box3 a, int marginA, Box3 b, int marginB) {
         return a.inflateXZ(Math.max(marginA, marginB)).intersects(b);
     }
-
-    // ---------------------------------------------------------------- internal
 
     private Optional<Placement> decide(StructureIntent intent, Map<StructureIntent, Optional<Placement>> memo) {
         Optional<Placement> m = memo.get(intent);
