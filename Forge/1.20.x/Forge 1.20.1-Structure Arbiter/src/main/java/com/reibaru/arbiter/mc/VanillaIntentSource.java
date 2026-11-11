@@ -29,24 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-/**
- * バニラの StructureSet から、指定した窓の近くにある構造物のintentを「チャンクに書かずに」先読みする。
- *
- * コストを下げるために、重い Structure#generate の前に次の順で候補を捨てる:
- *   1. セット単位: RandomSpread 以外 / spacing が小さい密集セット / 設定で除外したMOD（最初に1回だけ判定）
- *   2. 位置: 窓から extentBlocks 以上離れた候補チャンク
- *   3. 順位（wanted）: 順位が下の構造物・同じ構造物の別インスタンス（ソルバが指定）
- *   4. バイオーム: どの高さで見ても許可バイオームに入らない候補（バニラは生成の「後」に判定する）
- *   5. 同じ (構造物, チャンク) は1回しか生成しない。複数スレッドが同時に要求しても、生成は1スレッドだけ
- *
- * 生成した結果は純粋関数（シードと座標だけで決まる）なので、キャッシュしてよい。
- *
- * 割り切り:
- *  - 1つの StructureSet に複数エントリがあるときは全エントリを候補にする（実際に選ばれるのは1つ）
- *  - ConcentricRings（要塞）は対象外
- *  - extentBlocks より大きい構造物との衝突は見逃す
- *  - バイオードの先行判定は、チャンク中央の数点での近似。外れると候補を落とし、衝突を見逃すことがある
- */
+
 public final class VanillaIntentSource implements IntentSource {
 
     /** バイオーム先行判定で見る高さ（地下・地表・山）。 */
