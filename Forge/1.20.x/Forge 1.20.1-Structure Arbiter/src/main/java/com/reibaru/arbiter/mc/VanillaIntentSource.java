@@ -79,7 +79,6 @@ public final class VanillaIntentSource implements IntentSource {
         if (e == null) return List.of(); // 想定外（Mixinが先に準備する）。先読みなしで進める
 
         int extent = ArbiterConfig.extentBlocks();
-        // 候補チャンクの原点が [minX - extent - 15, maxX + extent] に入るものだけが、窓と交わりうる
         int cx0 = Math.floorDiv(minX - extent - 15, 16);
         int cx1 = Math.floorDiv(maxX + extent, 16);
         int cz0 = Math.floorDiv(minZ - extent - 15, 16);
@@ -108,8 +107,6 @@ public final class VanillaIntentSource implements IntentSource {
         }
         return out;
     }
-
-    // ---------------------------------------------------------------- internal
 
     private List<SetInfo> sets(GenEnv e) {
         List<SetInfo> s = sets;
@@ -179,7 +176,6 @@ public final class VanillaIntentSource implements IntentSource {
             Thread.currentThread().interrupt();
             return Optional.empty();
         } catch (ExecutionException ex) {
-            // 生成に失敗した候補は「先読みなし」として扱う（調停されないだけで、バニラ挙動のまま進む）
             ArbiterMod.LOGGER.warn("[Arbiter] 先読みの生成に失敗: {} chunk[{},{}]: {}",
                     entry.idString(), pos.x, pos.z, String.valueOf(ex.getCause()));
             return Optional.empty();
@@ -203,10 +199,6 @@ public final class VanillaIntentSource implements IntentSource {
         return Optional.of(IntentFactory.fromBox(entry.id(), result.getBoundingBox()));
     }
 
-    /**
-     * 許可バイオームに入りうるか。チャンク中央を複数の高さで見て、1つでも合えば true。
-     * 失敗したときは true（先読みを省かない）に倒す。
-     */
     private static boolean biomePossible(GenEnv e, Structure structure, ChunkPos pos) {
         try {
             Climate.Sampler sampler = e.randomState().sampler();
