@@ -24,7 +24,6 @@ public final class IntentFactory {
 
     public static final int DEFAULT_PRIORITY = 0;
 
-    /** id文字列 → {priority, margin, maxShift}。 */
     private static final Map<String, int[]> OVERRIDES = new ConcurrentHashMap<>();
 
     private IntentFactory() {}
@@ -38,7 +37,6 @@ public final class IntentFactory {
         return o != null ? o[0] : DEFAULT_PRIORITY;
     }
 
-    /** どの構造物のintentでも reach()（margin + maxShift）がこれを超えない。 */
     public static int maxNeighborReach() {
         int max = ArbiterConfig.defaultMargin() + ArbiterConfig.defaultMaxShift();
         for (int[] o : OVERRIDES.values()) max = Math.max(max, o[1] + o[2]);
