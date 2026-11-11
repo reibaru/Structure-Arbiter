@@ -15,13 +15,7 @@ import net.minecraftforge.fml.config.ModConfig;
 
 import org.slf4j.Logger;
 
-/**
- * MODのエントリポイント。
- *
- * 調停の本体は Mixin（MixinChunkGenerator）側で動く。ここでは /arbiter コマンドの登録と、
- * デバッグのチャット通知に使うサーバー参照の受け渡しだけを行う。
- * 構造物ごとの優先度・間隔・移動量は、今のところ IntentFactory.override(...) で上書きする。
- */
+
 @Mod(ArbiterMod.MODID)
 public class ArbiterMod {
 
