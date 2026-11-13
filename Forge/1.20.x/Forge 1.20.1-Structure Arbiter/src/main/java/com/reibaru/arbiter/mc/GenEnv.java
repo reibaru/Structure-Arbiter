@@ -8,11 +8,7 @@ import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
-/**
- * Structure#generate を「隣のチャンクについて」呼ぶために必要な部品一式。
- * tryGenerateStructure の引数から集める。ChunkAccess は保持しない（リーク防止）ので、
- * 高さ情報だけの軽い LevelHeightAccessor を使う。
- */
+
 public record GenEnv(
         RegistryAccess registries,
         ChunkGenerator generator,
