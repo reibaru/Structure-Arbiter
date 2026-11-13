@@ -9,22 +9,11 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * StructureStart の BoundingBox から StructureIntent を作る唯一の場所。
- * VanillaIntentSource（隣の先読み）と Mixin（実際の生成）が必ず同じ関数を通ることで、
- * 同じチャンクの同じ構造物は同じintentになる（＝調停結果が一致する）。
- *
- * priority は構造物IDだけで決まる（生成前に分かる）ことが重要。先読みは、順位で負ける構造物を
- * 生成せずに捨てるため、生成前に priorityOf(id) を使う。
- *
- * priority / margin / maxShift は構造物IDごとの上書きを受け付ける。
- * 既定の margin / maxShift は設定ファイル（ArbiterConfig）から読む。
- */
+
 public final class IntentFactory {
 
     public static final int DEFAULT_PRIORITY = 0;
 
-    /** id文字列 → {priority, margin, maxShift}。 */
     private static final Map<String, int[]> OVERRIDES = new ConcurrentHashMap<>();
 
     private IntentFactory() {}
@@ -38,7 +27,6 @@ public final class IntentFactory {
         return o != null ? o[0] : DEFAULT_PRIORITY;
     }
 
-    /** どの構造物のintentでも reach()（margin + maxShift）がこれを超えない。 */
     public static int maxNeighborReach() {
         int max = ArbiterConfig.defaultMargin() + ArbiterConfig.defaultMaxShift();
         for (int[] o : OVERRIDES.values()) max = Math.max(max, o[1] + o[2]);
