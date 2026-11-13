@@ -21,15 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
-/**
- * デバッグの窓口。ログ・統計・直近イベントの履歴・チャット通知をここに集約する。
- *
- * 統計カウンタは常に動く（負荷は無視できる程度）。
- * ログ出力・履歴・チャット通知は enabled のときだけ動く。理由の取得（邪魔した構造物の特定）は
- * 再計算が入るので、棄却/移動のときかつ enabled のときだけ行う。
- *
- * 切り替え: /arbiter debug|verbose|chat on|off  （起動時は -Darbiter.debug=true でも有効化できる）
- */
+
 public final class ArbiterDebug {
 
     public enum Kind { ACCEPT, MOVE, REJECT }
@@ -73,9 +65,6 @@ public final class ArbiterDebug {
         server = s;
     }
 
-    // ---------------------------------------------------------------- 記録（Mixin/先読みから呼ぶ）
-
-    /** 調停の結果を記録する。nanos は decide() にかかった時間。 */
     public static void onDecision(RegionSolver solver, StructureIntent intent, int chunkX, int chunkZ,
                                   Optional<Placement> result, long nanos) {
         evaluated.incrementAndGet();
@@ -84,7 +73,6 @@ public final class ArbiterDebug {
 
         long decideMs = nanos / 1_000_000;
         if (decideMs >= ArbiterConfig.slowDecideMs()) {
-            // debugの設定に関係なく出す。先読みが重いときにすぐ気づけるように
             ArbiterMod.LOGGER.warn("[Arbiter] SLOW decision: {} chunk[{},{}] の判定に {} ms かかった"
                     + "（/arbiter stats で先読みが重い構造物を確認できる）", intent.id(), chunkX, chunkZ, decideMs);
         }
@@ -119,7 +107,6 @@ public final class ArbiterDebug {
         emit(new Event(System.currentTimeMillis(), kind, intent.id(), chunkX, chunkZ, intent.box(), detail));
     }
 
-    /** 調停できずバニラ挙動のまま通した（初期化前など）。 */
     public static void onPassthrough(String id) {
         passthrough.incrementAndGet();
         if (enabled && verbose) {
@@ -127,7 +114,6 @@ public final class ArbiterDebug {
         }
     }
 
-    /** 先読みで Structure#generate を1回実行した。重い構造物を特定するため、IDごとに時間を集計する。 */
     public static void onResolve(String id, long nanos) {
         lookaheadGenerates.incrementAndGet();
         lookaheadNanos.addAndGet(nanos);
@@ -145,12 +131,9 @@ public final class ArbiterDebug {
         }
     }
 
-    /** バイオームが合わないので、重い生成をせずに捨てた。 */
     public static void onPrefilterBiome() {
         biomeSkips.incrementAndGet();
     }
-
-    // ---------------------------------------------------------------- 表示（コマンドから呼ぶ）
 
     public static String statsText() {
         long n = evaluated.get();
@@ -217,8 +200,6 @@ public final class ArbiterDebug {
         return sb.toString();
     }
 
-    // ---------------------------------------------------------------- internal
-
     private static void emit(Event e) {
         recent.addLast(e);
         if (recentSize.incrementAndGet() > MAX_RECENT) {
@@ -253,7 +234,6 @@ public final class ArbiterDebug {
         return sb.toString();
     }
 
-    /** 先読みの累計時間が大きい順。"id 合計ms (回数, 平均ms)" */
     private static String topResolve(int limit) {
         if (resolveNanosById.isEmpty()) return "なし";
         List<Map.Entry<String, LongAdder>> es = new ArrayList<>(resolveNanosById.entrySet());
