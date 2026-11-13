@@ -29,20 +29,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * /arbiter コマンド（OP権限レベル2）。
- *
- *   /arbiter debug on|off      ログ出力（棄却・移動）のオン/オフ
- *   /arbiter verbose on|off    通過（問題なし）や先読みのログも出す
- *   /arbiter chat on|off       OPのチャットにも通知する
- *   /arbiter stats             判定件数・時間・先読みコスト・棄却が多い構造物
- *   /arbiter recent [n]        直近のイベント（最大50件）
- *   /arbiter here              今いるリージョンの構造物の判定結果一覧（クリックでTP）
- *   /arbiter reset             統計と履歴をリセット
- */
+
 public final class ArbiterCommands {
 
-    /** /arbiter here で調べる範囲（ブロック）。初回は先読みの生成が走るので少し待つことがある。 */
     private static final int HERE_RADIUS = 192;
 
     private ArbiterCommands() {}
@@ -98,7 +87,6 @@ public final class ArbiterCommands {
         return lines.size();
     }
 
-    /** 今いるリージョンの全intentについて、判定結果を距離順に表示する。 */
     private static int here(CommandContext<CommandSourceStack> c) {
         CommandSourceStack src = c.getSource();
         ServerLevel level = src.getLevel();
