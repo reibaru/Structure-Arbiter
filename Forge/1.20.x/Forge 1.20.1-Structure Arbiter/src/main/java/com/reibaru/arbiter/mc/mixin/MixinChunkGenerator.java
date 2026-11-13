@@ -41,24 +41,10 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
-/**
- * ChunkGenerator#tryGenerateStructure 内の Structure#generate を横取りして調停する。
- * 要点:
- *   1. generate は通常どおり実行して StructureStart を得る
- *   2. その BoundingBox から intent を作り（先読みと同じ IntentFactory）、ソルバに聞く
- *   3. 棄却 → 空のStructureStart / 無移動 → そのまま / 移動 → 全ピースを move して作り直す
- *   4. 結果は ArbiterDebug に記録する（/arbiter stats|recent|here で見られる）
- *
- * ArbiterAccess を実装するので、コマンド側が (ChunkGenerator instanceof ArbiterAccess) で
- * ディメンションごとのソルバを取り出せる。
- *
- * 「target not found」が出たら、署名をIDEの逆コンパイルで確認して直す。injectors.defaultRequire=1
- * にしてあるので、合わなければ起動時に必ず落ちる（黙って効かない状態にはならない）。
- */
+
 @Mixin(ChunkGenerator.class)
 public abstract class MixinChunkGenerator implements ArbiterAccess {
 
-    /** createStructures の引数から拾う。ChunkGenerator 自身は保持していない。 */
     @Unique
     private volatile ChunkGeneratorStructureState arbiter$structureState;
 
