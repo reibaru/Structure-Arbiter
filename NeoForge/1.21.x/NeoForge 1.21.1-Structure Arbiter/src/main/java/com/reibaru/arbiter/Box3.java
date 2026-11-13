@@ -1,9 +1,6 @@
 package com.reibaru.arbiter;
 
-/**
- * ブロック座標の閉区間AABB [min, max]（MinecraftのBoundingBoxと同じ流儀）。
- * MC非依存なので単体テストできる。
- */
+
 public record Box3(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 
     public Box3 {
