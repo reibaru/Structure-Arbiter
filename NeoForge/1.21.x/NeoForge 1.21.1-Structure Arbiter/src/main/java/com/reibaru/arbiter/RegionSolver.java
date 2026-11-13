@@ -28,7 +28,6 @@ public final class RegionSolver {
         this.source = source;
     }
 
-    /** intent の確定配置。empty なら棄却。 */
     public Optional<Placement> decide(StructureIntent intent) {
         Optional<Placement> cached = cache.get(intent);
         if (cached != null) return cached;
@@ -44,10 +43,6 @@ public final class RegionSolver {
         return result;
     }
 
-    /**
-     * デバッグ用: 希望位置のままだと衝突する「より高順位の確定配置」の一覧。
-     * 無移動で通ったintentでは空、移動・棄却されたintentでは必ず1件以上になる。
-     */
     public List<Placement> conflictingAtOriginal(StructureIntent intent) {
         List<Placement> out = new ArrayList<>();
         for (Placement p : higherRankedPlacements(intent, new HashMap<>())) {
@@ -56,7 +51,6 @@ public final class RegionSolver {
         return out;
     }
 
-    /** 2つの配置が衝突するか。ソルバとテストで同じ述語を使う。 */
     public static boolean conflicts(Box3 a, int marginA, Box3 b, int marginB) {
         return a.inflateXZ(Math.max(marginA, marginB)).intersects(b);
     }
@@ -90,19 +84,16 @@ public final class RegionSolver {
 
     private List<Placement> higherRankedPlacements(StructureIntent intent, Map<StructureIntent, Optional<Placement>> memo) {
         Box3 b = intent.box();
-        // n.box を n.reach() 広げたものが intent.box を reach() 広げたものと交わる  ⇒  n.box は下の矩形と交わる
         int r = intent.reach() + source.maxNeighborReach();
         Box3 mine = b.inflateXZ(intent.reach());
         String myId = intent.id();
         int myPriority = intent.priority();
-        // 生成前に判定できる条件で絞る: 自分と同じ構造物は対象外、順位が下の構造物も対象外
         BiPredicate<String, Integer> wanted =
                 (id, priority) -> !id.equals(myId) && isHigher(priority, id, myPriority, myId);
 
         List<Placement> out = new ArrayList<>();
         for (StructureIntent n : source.intentsNear(seed, b.minX() - r, b.minZ() - r, b.maxX() + r, b.maxZ() + r,
                 wanted)) {
-            // ソースが絞り込みを守らなくても結果が変わらないよう、ここでも同じ条件で判定する
             if (!wanted.test(n.id(), n.priority())) continue;
             if (!n.box().inflateXZ(n.reach()).intersects(mine)) continue; // 移動しても届かない
             decide(n, memo).ifPresent(out::add);
@@ -117,7 +108,6 @@ public final class RegionSolver {
         return false;
     }
 
-    /** k番目の移動候補。距離は maxShift*k/CANDIDATES、向きはシード由来。StrictMathでJVM間も同一結果。 */
     private int[] shiftOffset(StructureIntent intent, int k) {
         long h = mix(seed ^ 0x9E3779B97F4A7C15L);
         h = mix(h ^ intent.id().hashCode());
